@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: reverse-words
+  name: reverse-words
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reverse-words
+  template:
+    metadata:
+      labels:
+        app: reverse-words
+    spec:
+      containers:
+      - image: quay.io/famargon/quarkus-sample-app
+      # - image: default-route-openshift-image-registry.apps.amq-online.openshift-aws.rhocf-dev.com/default/quarkus-sample-app
+        imagePullPolicy: Always
+        name: reverse-words
+        env:
+          - name:  deployment.environment
+            value: kubernetes
+          - name:  service.name
+            value: reverse-words-kubernetes
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 9999
+            # httpHeaders:
+            # - name: Custom-Header
+            # value: Awesome
+          initialDelaySeconds: 1
+          periodSeconds: 5
+        terminationGracePeriodSeconds: 30

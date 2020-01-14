@@ -1,0 +1,23 @@
+apiVersion: serving.knative.dev/v1alpha1
+kind: Service
+metadata:
+  name: reversewords-quarkus
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - image: quay.io/famargon/quarkus-sample-app
+          name: quarkus-app
+          env:
+            - name:  deployment.environment
+              value: knative
+            - name:  service.name
+              value: quarkus-app-knative
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9999
+            initialDelaySeconds: 1
+            periodSeconds: 5
+          terminationGracePeriodSeconds: 30
